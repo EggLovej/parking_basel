@@ -12,9 +12,7 @@ import { ParkingList } from "./ParkingList";
 import { Dashboard } from "./Dashboard";
 import { ShowList } from "./ShowList";
 import { Route } from "react-router-dom";
-import Graph from "./Graph";
-import { ParkingGraph } from "./ParkingGraph";
-import CustomMenu from "./CustomMenu";
+import ParkingGraph from "./ParkingGraph";
 import 'leaflet/dist/leaflet.css';
 import { ParkingMap } from "./ParkingMap";
 
@@ -22,7 +20,7 @@ export const App = () => (
   <Admin layout={Layout} dataProvider={dataProvider} dashboard={ Dashboard }>
     <Resource name="parking" list={ParkingList} show={ShowList} />
     <CustomRoutes>
-      <Route path="/graph" element={<Graph/> } />
+      <Route path="/graph" element={<ParkingGraph/> } />
       <Route path="/map" element={<ParkingMap />} />
     </CustomRoutes>
   </Admin>

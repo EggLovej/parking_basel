@@ -1,25 +1,18 @@
-// ParkingGraph.tsx
-import React, { useEffect, useState } from 'react';
-import { useDataProvider, RaRecord } from 'react-admin';
-import { Card } from '@mui/material';
-import {
-    BarChart,
-    Bar,
-    XAxis,
-    YAxis,
-    Tooltip,
-    ResponsiveContainer,
-    Cell,
-} from 'recharts';
+import React, { PureComponent, useState, useEffect } from 'react';
+import { BarChart, Bar, ResponsiveContainer, CartesianGrid, XAxis, YAxis, Rectangle, Cell } from 'recharts';
+import { useDataProvider } from 'react-admin';
 
-interface ParkingRecord extends RaRecord {
+interface ParkingData {
+    id: number;
     title: string;
-    auslastungen: number; // Assuming this is a fraction between 0 and 1
+    auslastungen: number;
 }
 
-export const ParkingGraph: React.FC = () => {
+const ParkingGraph = () => {
+
     const dataProvider = useDataProvider();
-    const [data, setData] = useState<ParkingRecord[]>([]);
+    const [data, setData] = useState<ParkingData[]>([]);
+    const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
     useEffect(() => {
         dataProvider.getList('parking', {
@@ -35,29 +28,34 @@ export const ParkingGraph: React.FC = () => {
         });
     }, [dataProvider]);
 
-    const getColor = (percentage: number): string => {
-        if (percentage < 50) return 'green';
-        if (percentage < 75) return 'yellow';
-        return 'red';
-    };
+    const handleMouseEnter = (index: number) => {
+        setActiveIndex(index);
+    }
+
+    const handleMouseLeave = () => {
+        setActiveIndex(null);
+    }
 
     return (
-        <Card>
-            <ResponsiveContainer width="100%" height={400}>
-                <BarChart data={data}>
-                    <XAxis dataKey="title" />
-                    <YAxis />
-                    <Tooltip />
-                    <Bar dataKey="auslastungen" name="Occupancy Rate">
-                        {data.map((entry, index) => (
-                            <Cell
-                                key={`cell-${index}`}
-                                fill={getColor(entry.auslastungen)}
-                            />
-                        ))}
-                    </Bar>
-                </BarChart>
-            </ResponsiveContainer>
-        </Card>
+        <ResponsiveContainer width="100%" height={300}>
+            <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" max={100} />
+                <XAxis dataKey="title"/>
+                <YAxis range={[0, 50]} unit='%'/>
+
+                <Bar dataKey="auslastungen" fill="#8884d8" onMouseEnter={(data, index) => handleMouseEnter(index)} onMouseLeave={handleMouseLeave}>
+                    {data.map((entry, index) => (
+                        <Cell
+                            
+                            key={`cell-${index}`}
+                            fill={index === activeIndex ? 'pink' : entry.auslastungen < 50 ? 'green' : entry.auslastungen < 80 ? 'orange' : 'red'}
+                            stroke={index === activeIndex ? 'blue' : 'none'}
+                        />
+                    ))}
+                </Bar>
+            </BarChart>
+        </ResponsiveContainer>
     );
 };
+
+export default ParkingGraph;
