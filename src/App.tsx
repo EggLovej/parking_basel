@@ -5,6 +5,7 @@ import {
   EditGuesser,
   ShowGuesser,
   CustomRoutes,
+  Title,
 } from "react-admin";
 import { Layout } from "./Layout";
 import dataProvider from "./dataProvider";
@@ -17,7 +18,13 @@ import 'leaflet/dist/leaflet.css';
 import { ParkingMap } from "./ParkingMap";
 
 export const App = () => (
-  <Admin layout={Layout} dataProvider={dataProvider} dashboard={ Dashboard }>
+  <Admin
+    title="Parking Basel"
+    disableTelemetry 
+    layout={Layout} 
+    dataProvider={dataProvider} 
+    dashboard={ Dashboard }>
+    
     <Resource name="parking" list={ParkingList} show={ShowList} />
     <CustomRoutes>
       <Route path="/graph" element={<ParkingGraph/> } />
